@@ -35,18 +35,18 @@ export function inferType(expr, t, env) {
     }
 
     if (expr.type === EXPRESSION_TYPE.ABS) {
-        const { functionName, exprBody } = expr
+        const { attributeName, exprBody } = expr
 
-        const exprType = env.lookup(createExprVar(functionName))
+        const exprType = env.lookup(createExprVar(attributeName))
 
         if (isNil(exprType)) {
             const { env : newEnv, t: newFreeId } = inferType(exprBody, clone(t), env.clone())
             const exprBodyType = newEnv.lookup(exprBody)
-            const exprType = newEnv.lookup(createExprVar(functionName))
+            const exprType = newEnv.lookup(createExprVar(attributeName))
 
             if (isNil(exprType)) {
                 const tv = t.splice(0, 1)[0]
-                const newEnv2 = env.insert(createExprVar(functionName), createTypeTyVar(tv))
+                const newEnv2 = env.insert(createExprVar(attributeName), createTypeTyVar(tv))
                 return {
                     env: newEnv2.insert(expr, createTypeArrow(createTypeTyVar(tv), exprBodyType)),
                     t: newFreeId
@@ -59,7 +59,7 @@ export function inferType(expr, t, env) {
             }
 
         } else {
-            error(`Повторяющаяся связанная функция ${ functionName }`)
+            error(`Повторяющаяся связанная функция ${ attributeName }`)
         }
     }
 

@@ -91,6 +91,24 @@ export const EXPRESSION_TYPE = {
     ABS: 'ABS' // абстракция
 }
 
+export function lambdaToJavascript(expr) {
+    if (expr.type === EXPRESSION_TYPE.ABS) {
+        const { functionName, exprBody, attributeName } = expr
+
+        return `function ${ functionName }(${ attributeName }) {\n` + lambdaToJavascript(exprBody) + '\n}'
+    }
+
+    if (expr.type === EXPRESSION_TYPE.APP) {
+        const { expr1, expr2 } = expr
+
+        return `${ lambdaToJavascript(expr1) }(${ lambdaToJavascript(expr2) })`
+    }
+
+    if (expr.type === EXPRESSION_TYPE.VAR) {
+        return expr.name
+    }
+}
+
 const createdExprVars = {}
 export function createExprVar(name) {
     if (isSomething(createdExprVars[ name ])) {
@@ -116,12 +134,13 @@ export function createExprApp(expr1, expr2) {
     }
 }
 
-export function createExprAbs(functionName, exprBody) {
+export function createExprAbs(functionName, exprBody, attributeName = 'attr') {
     return {
         type: EXPRESSION_TYPE.ABS,
         index: EXPRESSION_COUNTER++,
         functionName,
-        exprBody
+        exprBody,
+        attributeName
     }
 }
 
