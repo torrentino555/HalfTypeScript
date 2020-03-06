@@ -111,7 +111,7 @@ export function inferType(expr, t, env) {
                     t: clone(tvs2)
                 }
             } else {
-                error("Can't apply \"" + exprToString(e1) + "\" to \"" + exprToString(e2) + "\". Incompatible types.")
+                error("Не удаётся применить \"" + exprToString(e1) + "\" to \"" + exprToString(e2) + "\". Несовместимые типы.")
             }
         }
     }
@@ -137,7 +137,7 @@ function unifyTypes(type1, type2, env) {
         return unifyTypes(t2, t2_, env1.clone())
     }
 
-    error("Can't unify type (" + typeToString(type1) + ") with (" + typeToString(type2) + ").")
+    error("Не удаётся унифицировать тип (" + typeToString(type1) + ") с (" + typeToString(type2) + ").")
 }
 
 function areTypesCompatible(type1, type2) {

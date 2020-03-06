@@ -1,4 +1,5 @@
 import { isNil } from "ramda"
+import { DEBUG } from "./index"
 
 export function isSomething(obj) {
     return !isNil(obj)
@@ -16,4 +17,10 @@ export function generateNames() {
     }
 
     return result
+}
+
+export function log(message) {
+    if (DEBUG) {
+        console.log(message)
+    }
 }

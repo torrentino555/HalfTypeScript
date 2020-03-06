@@ -1,4 +1,4 @@
-import { clone, values } from "ramda"
+import { clone, identity, isNil, times, values } from "ramda"
 import { isSomething } from "./utils"
 
 let EXPRESSION_COUNTER = 0
@@ -37,6 +37,10 @@ export class Environment {
 }
 
 export function typeToString(item) {
+    if (isNil(item)) {
+        return ''
+    }
+
     if (item.type === TYPE.CONST) {
         return " * "
     }
@@ -91,21 +95,21 @@ export const EXPRESSION_TYPE = {
     ABS: 'ABS' // абстракция
 }
 
-export function lambdaToJavascript(expr) {
+export function lambdaToJavascript(expr, n = 0, isNewLine = true) {
+    const tabs = isNewLine && n !== 0 ? times(i => "\t", n).join('') + 'return ' : ""
     if (expr.type === EXPRESSION_TYPE.ABS) {
         const { functionName, exprBody, attributeName } = expr
-
-        return `function ${ functionName }(${ attributeName }) {\n` + lambdaToJavascript(exprBody) + '\n}'
+        return `${ tabs }function ${ functionName }(${ attributeName }) {\n${ lambdaToJavascript(exprBody, n + 1, true) }\n${ times(i => "\t", n).join('') }}`
     }
 
     if (expr.type === EXPRESSION_TYPE.APP) {
         const { expr1, expr2 } = expr
 
-        return `${ lambdaToJavascript(expr1) }(${ lambdaToJavascript(expr2) })`
+        return `${ tabs }${ lambdaToJavascript(expr1, n, false) }(${ lambdaToJavascript(expr2, n, false) })`
     }
 
     if (expr.type === EXPRESSION_TYPE.VAR) {
-        return expr.name
+        return `${ tabs }${expr.name}`
     }
 }
 
